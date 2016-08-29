@@ -10,32 +10,38 @@ BIN_PATH="$BUILD_DIR/bin"
 TMP_PATH="$BUILD_DIR/tmp"
 mkdir -p $CACHE_DIR $BIN_PATH $TMP_PATH
 
-WKHTMLTOPDF_URL="http://download.gna.org/wkhtmltopdf/0.12/0.12.2.1/wkhtmltox-0.12.2.1_linux-trusty-amd64.deb"
-WKHTMLTOPDF_PKG="$CACHE_DIR/wkhtmltopdf.deb"
-WKHTMLTOPDF_PATH="$TMP_PATH/wkhtmltopdf"
-WKHTMLTOPDF_BINARIES="$WKHTMLTOPDF_PATH/usr/local/bin"
+WKHTMLTOX_CACHE="$CACHE_DIR/wkhtmltox"
+WKHTMLTOX_URL="http://download.gna.org/wkhtmltopdf/0.12/0.12.3/wkhtmltox-0.12.3_linux-generic-amd64.tar.xz"
+WKHTMLTOX_TAR="$TMP_PATH/wkhtmltox.tar.xz"
+WKHTMLTOX_PATH="$TMP_PATH/wkhtmltox"
+WKHTMLTOX_BINARIES="$WKHTMLTOX_PATH/bin"
 
 BIN_DIR=$(cd $(dirname $0); pwd)
 FONTS_DIR=$(cd "$BIN_DIR/../fonts"; pwd)
 
-if [ -f $WKHTMLTOPDF_PKG ]; then
-  echo "-----> Using wkhtmltopdf Debian package from cache"
+if [ -d $WKHTMLTOX_CACHE ]; then
+  echo "-----> Using wkhtmltopdf and wkhtmltoimage binaries from cache"
 else
-  echo "-----> Downloading wkhtmltopdf Debian package"
-  curl -L $WKHTMLTOPDF_URL -o $WKHTMLTOPDF_PKG
+  echo "-----> Downloading wkhtmltox tarball"
+  curl -L $WKHTMLTOX_URL -o $WKHTMLTOX_TAR
+
+  echo "-----> Unpacking wkhtmltox tarball"
+  tar -xf $WKHTMLTOX_TAR -C $TMP_PATH
+
+  echo "-----> Setting permissions"
+  chmod +x $WKHTMLTOX_BINARIES/*
+
+  echo "-----> Caching wkhtmltopdf and wkhtmltoimage binaries"
+  mkdir $WKHTMLTOX_CACHE
+  cp $WKHTMLTOX_BINARIES/* $WKHTMLTOX_CACHE
 fi
 
-echo "-----> Unpacking Debian package"
-dpkg -x $WKHTMLTOPDF_PKG $WKHTMLTOPDF_PATH
-
-echo "-----> Setting permissions"
-chmod +x $WKHTMLTOPDF_BINARIES/*
-
 echo "-----> Moving binaries to the right place"
-mv $WKHTMLTOPDF_BINARIES/* $BIN_PATH/
+mv $WKHTMLTOX_CACHE/* $BIN_PATH/
 
 echo "-----> Cleaning up"
-rm -rf $WKHTMLTOPDF_PATH
+rm -rf $WKHTMLTOX_TAR
+rm -rf $WKHTMLTOX_PATH
 
 echo "-----> Installing fonts"
 mkdir -p $1/.fonts
