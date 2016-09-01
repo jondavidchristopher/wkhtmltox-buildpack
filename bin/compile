@@ -13,35 +13,24 @@ mkdir -p $CACHE_DIR $BIN_PATH $TMP_PATH
 WKHTMLTOX_CACHE="$CACHE_DIR/wkhtmltox"
 WKHTMLTOX_URL="http://download.gna.org/wkhtmltopdf/0.12/0.12.3/wkhtmltox-0.12.3_linux-generic-amd64.tar.xz"
 WKHTMLTOX_TAR="$TMP_PATH/wkhtmltox.tar.xz"
-WKHTMLTOX_PATH="$TMP_PATH/wkhtmltox"
 WKHTMLTOX_BINARIES="$WKHTMLTOX_PATH/bin"
 
 BIN_DIR=$(cd $(dirname $0); pwd)
 FONTS_DIR=$(cd "$BIN_DIR/../fonts"; pwd)
 
-if [ -d $WKHTMLTOX_CACHE ]; then
+if [ -f $WKHTMLTOX_CACHE/bin/wkhtmltopdf ] && [ -f $WKHTMLTOX_CACHE/bin/wkhtmltoimage ]; then
   echo "-----> Using wkhtmltopdf and wkhtmltoimage binaries from cache"
 else
   echo "-----> Downloading wkhtmltox tarball"
   curl -L $WKHTMLTOX_URL -o $WKHTMLTOX_TAR
-
-  echo "-----> Unpacking wkhtmltox tarball"
-  tar -xf $WKHTMLTOX_TAR -C $TMP_PATH
-
-  echo "-----> Setting permissions"
-  chmod +x $WKHTMLTOX_BINARIES/*
-
-  echo "-----> Caching wkhtmltopdf and wkhtmltoimage binaries"
-  mkdir $WKHTMLTOX_CACHE
-  cp $WKHTMLTOX_BINARIES/* $WKHTMLTOX_CACHE
+  mkdir -p $WKHTMLTOX_CACHE
+  tar -xf $WKHTMLTOX_TAR -C "$WKHTMLTOX_CACHE/../"
+  rm -rf $WKHTMLTOX_TAR
+  chmod -R +x $WKHTMLTOX_CACHE/bin
 fi
 
 echo "-----> Moving binaries to the right place"
-mv $WKHTMLTOX_CACHE/* $BIN_PATH/
-
-echo "-----> Cleaning up"
-rm -rf $WKHTMLTOX_TAR
-rm -rf $WKHTMLTOX_PATH
+mv $WKHTMLTOX_CACHE/bin/* $BIN_PATH/
 
 echo "-----> Installing fonts"
 mkdir -p $1/.fonts
