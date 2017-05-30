@@ -11,7 +11,7 @@ TMP_PATH="$BUILD_DIR/tmp"
 mkdir -p $CACHE_DIR $BIN_PATH $TMP_PATH
 
 WKHTMLTOX_CACHE="$CACHE_DIR/wkhtmltox"
-WKHTMLTOX_URL="http://download.gna.org/wkhtmltopdf/0.12/0.12.3/wkhtmltox-0.12.3_linux-generic-amd64.tar.xz"
+WKHTMLTOX_URL="https://downloads.wkhtmltopdf.org/0.12/0.12.4/wkhtmltox-0.12.4_linux-generic-amd64.tar.xz"
 WKHTMLTOX_TAR="$TMP_PATH/wkhtmltox.tar.xz"
 WKHTMLTOX_BINARIES="$WKHTMLTOX_PATH/bin"
 
@@ -32,8 +32,3 @@ fi
 echo "-----> Moving binaries to the right place"
 mv $WKHTMLTOX_CACHE/bin/* $BIN_PATH/
 
-echo "-----> Installing fonts"
-mkdir -p $1/.fonts
-ls $FONTS_DIR
-cp $FONTS_DIR/* $1/.fonts/
-fc-cache -f $1/.fonts
