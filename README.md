@@ -4,7 +4,7 @@ This is a [Heroku buildpack][0] for bundling compatible [wkhtmltopdf][1] and [wk
 
 ## Versions
 
-* Buildpack:   `0.3`
+* Buildpack:   `0.1`
 * wkhtmltopdf: `0.12.4`
 
 ## Usage
